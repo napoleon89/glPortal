@@ -1,0 +1,1 @@
+{"name":"glPortal","tagline":"Simple OpenGL clone of Valve's Portal","body":"Based on glPortal 2012 by Simon Larsen \r\n\r\n- cmake src\r\n- make\r\n- ./portal","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
