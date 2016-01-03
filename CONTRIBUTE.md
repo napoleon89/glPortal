@@ -8,6 +8,7 @@
 - Contact us through [gitter](https://gitter.im/GlPortal/glPortal?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) or [irc](http://webchat.freenode.net/?channels=%23%23glportal&uio=d4).
 
 ### Composers
+- Check our [existing tracks](http://glportal.github.io/showcase/music/).
 - Check our [music guidelines](https://github.com/GlPortal/specification/blob/master/music.md).
 - Add your note-sheets to our [repository](https://github.com/GlPortal/music).
 
