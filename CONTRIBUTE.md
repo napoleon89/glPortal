@@ -10,6 +10,7 @@
 ### Composers
 - Check our [existing tracks](http://glportal.github.io/showcase/music/).
 - Check our [music guidelines](https://github.com/GlPortal/specification/blob/master/music.md).
+- Add your ogg files to our [raw data repository](https://github.com/GlPortal/glportal_raw_data) or supply a download link in gitter so we can put it up.
 - Add your note-sheets to our [repository](https://github.com/GlPortal/music).
 
 ## Quality Control
