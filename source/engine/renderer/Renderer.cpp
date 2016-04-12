@@ -78,7 +78,14 @@ int Renderer::getTextWidth(std::string text) {
   return this->font->getStringLength(text);
 }
 
+void APIENTRY outputOpenGLErrors(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
+  System::Log(Error, "OpenGL Error") << message;
+}
+
+#define DEBUG_FUNCTION_START() if(debuggingFrame) System::Log(Debug, "Function: ") << __func__
+
 void Renderer::render(double dtime, const Camera &cam) {
+  if(debuggingFrame) System::Log(Debug, "  Starting frame") << currentCaptureFrameIndex;
   time += dtime;
   viewport->getSize(&vpWidth, &vpHeight);
 
@@ -235,6 +242,10 @@ void Renderer::render(double dtime, const Camera &cam) {
   glClear(GL_DEPTH_BUFFER_BIT);
   UiRenderer::render(*this);
   TerminalRenderer::render(*this);
+  if(debuggingFrame) {
+    System::Log(Debug, "  Ending frame") << currentCaptureFrameIndex;
+    currentCaptureFrameIndex++;
+  }
 }
 
 void Renderer::renderScene(const Camera &camera) {
@@ -242,6 +253,7 @@ void Renderer::renderScene(const Camera &camera) {
 }
 
 void Renderer::renderEntities(const Camera &cam) {
+  DEBUG_FUNCTION_START();  
   for (Entity &e : scene->entities) {
     if (e.hasComponent<MeshDrawable>()) {
       renderEntity(cam, e);
@@ -250,6 +262,7 @@ void Renderer::renderEntities(const Camera &cam) {
 }
 
 void Renderer::renderEntity(const Camera &cam, const Entity &e) {
+  DEBUG_FUNCTION_START();
   MeshDrawable &drawable = e.getComponent<MeshDrawable>();
   Matrix4f mtx;
   e.getComponent<Transform>().getModelMtx(mtx);
@@ -264,6 +277,7 @@ void Renderer::renderEntity(const Camera &cam, const Entity &e) {
 }
 
 void Renderer::renderPlayer(const Camera &cam) {
+  DEBUG_FUNCTION_START();
   const Transform &t = scene->player->getComponent<Transform>();
   Matrix4f mtx;
   mtx.translate(t.getPosition() + Vector3f(0, -.5f, 0));
@@ -276,6 +290,7 @@ void Renderer::renderPlayer(const Camera &cam) {
 }
 
 void Renderer::renderPortalStencil(const Camera &cam, const Entity &portal) {
+  DEBUG_FUNCTION_START();
   glClear(GL_STENCIL_BUFFER_BIT);
 
   // Disable writing to the color and depth buffer
@@ -300,6 +315,7 @@ void Renderer::renderPortalStencil(const Camera &cam, const Entity &portal) {
 }
 
 void Renderer::renderPortal(const Camera &cam, const Entity &portal, const Entity &otherPortal) {
+  DEBUG_FUNCTION_START();
   if (portal.getComponent<Portal>().open and otherPortal.getComponent<Portal>().open) {
     Transform &pt = portal.getComponent<Transform>();
     Transform &opt = otherPortal.getComponent<Transform>();
@@ -398,6 +414,7 @@ void Renderer::renderPortal(const Camera &cam, const Entity &portal, const Entit
 }
 
 void Renderer::renderPortalOverlay(const Camera &cam, const Entity &portal) {
+  DEBUG_FUNCTION_START();
   const Portal &p = portal.getComponent<Portal>();
   if (p.open) {
     Matrix4f mtx;
@@ -409,6 +426,7 @@ void Renderer::renderPortalOverlay(const Camera &cam, const Entity &portal) {
 }
 
 void Renderer::renderPortalNoise(const Camera &cam, const Entity &portal, float fade) {
+  DEBUG_FUNCTION_START();
   Matrix4f mtx;
   portal.getComponent<Transform>().getModelMtx(mtx);
 
@@ -428,6 +446,7 @@ void Renderer::renderPortalNoise(const Camera &cam, const Entity &portal, float 
 }
 
 void Renderer::renderText(const Camera &cam, const std::string &text, Vector3f vector) {
+  DEBUG_FUNCTION_START();
   // FIXME This should be determined by the currently set font
   const Material &mat = MaterialLoader::fromTexture("Pacaya.png");
   Shader &shader = ShaderLoader::getShader("text.frag");
@@ -458,6 +477,7 @@ void Renderer::renderText(const Camera &cam, const std::string &text, Vector3f v
 
 void Renderer::renderMesh(const Camera &cam, Shader &shader, Matrix4f &mdlMtx,
                           const Mesh &mesh, const Material *mat) {
+  DEBUG_FUNCTION_START();
   glUseProgram(shader.handle);
 
   Matrix4f projMatrix; cam.getProjMatrix(projMatrix);
@@ -506,6 +526,7 @@ void Renderer::renderMesh(const Camera &cam, Shader &shader, Matrix4f &mdlMtx,
 
 void Renderer::setCameraInPortal(const Camera &cam, Camera &dest,
                                  const Entity &portal, const Entity &otherPortal) {
+  DEBUG_FUNCTION_START();
   Transform &p1T = portal.getComponent<Transform>();
   Matrix4f p1mat;
   p1mat.translate(p1T.getPosition());
@@ -558,5 +579,20 @@ Matrix4f Renderer::clipProjMat(const Entity &ent,
   return newProj;
 }
 */
+
+void Renderer::startDebugFrameCapture() {
+  debuggingFrame = true;
+  System::Log(Debug, "Starting Debug Capture..");
+  glEnable(GL_DEBUG_OUTPUT);
+  glDebugMessageCallback(outputOpenGLErrors, 0);
+  currentCaptureFrameIndex = 0;
+}
+
+void Renderer::stopDebugFrameCapture() {
+  debuggingFrame = false;
+  System::Log(Debug, "Stopping Debug Capture..");
+  glDisable(GL_DEBUG_OUTPUT);
+  glDebugMessageCallback(0, 0);
+}
 
 } /* namespace glPortal */

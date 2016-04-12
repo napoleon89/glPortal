@@ -13,6 +13,7 @@
 namespace glPortal {
 std::string ArgumentsParser::mapName = "";
 std::string ArgumentsParser::mapPath = "";
+bool ArgumentsParser::glDebug = false;
 
 void ArgumentsParser::setEnvironmentFromArgs(const int argc, char **argv) {
   static struct option long_options[] = {
@@ -21,6 +22,7 @@ void ArgumentsParser::setEnvironmentFromArgs(const int argc, char **argv) {
     {"datadir",          required_argument, 0, 'd'},
     {"map",              required_argument, 0, 'm'},
     {"mapfrompath",      required_argument, 0, 'p'},
+    {"gldebug",          no_argument,       0, 'g'},
     {0, 0, 0, 0}
   };
 
@@ -56,6 +58,7 @@ void ArgumentsParser::setEnvironmentFromArgs(const int argc, char **argv) {
       std::cout << "  --datadir DIR        Set the data directory" << std::endl;
       std::cout << "  --map NAME           Specify map name to load" << std::endl;
       std::cout << "  --mapfrompath FILE   Load the specified map file" << std::endl;
+      std::cout << "  --gldebug            Enable OpenGL Debug output " << std::endl;
 
       exit(0);
     case 'm':
@@ -67,6 +70,11 @@ void ArgumentsParser::setEnvironmentFromArgs(const int argc, char **argv) {
       /// - mapFromPath \n
       /// Set the map that should be loaded.
       mapPath = optarg;
+      break;
+    case 'g':
+      // -gldebug \n
+      // Enable gldebugging output to console
+      glDebug = true;
     default:
       break;
     }
@@ -81,6 +89,7 @@ void ArgumentsParser::populateConfig() {
   if (not mapPath.empty()) {
     config.mapPath = mapPath;
   }
+  config.glDebug = glDebug;
 }
 
 } /* namespace glPortal */

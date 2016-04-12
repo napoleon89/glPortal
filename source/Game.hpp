@@ -33,6 +33,7 @@ private:
   World world;
   std::unique_ptr<GameController> controller;
   bool closed;
+  bool debugKeyPressed = false;;
 };
 
 } /* namespace glPortal */

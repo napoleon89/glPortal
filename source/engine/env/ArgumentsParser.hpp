@@ -9,6 +9,7 @@ class ArgumentsParser {
 private:
   static std::string mapName;
   static std::string mapPath;
+  static bool glDebug;
 public:
   static void setEnvironmentFromArgs(const int argc, char **argv);
   static void populateConfig();

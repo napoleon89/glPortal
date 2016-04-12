@@ -15,6 +15,7 @@
 #include <engine/core/event/Observer.hpp>
 #include <engine/core/event/Dispatcher.hpp>
 #include <engine/core/event/observer/MusicObserver.hpp>
+#include <engine/renderer/Renderer.hpp>
 #include <util/sdl/Fps.hpp>
 #include "Input.hpp"
 #include "GameController.hpp"
@@ -53,7 +54,18 @@ void Game::update() {
     //Update the game if it is time
     while (currentTime > nextUpdate && skipped < MAX_SKIP) {
       controller->handleInput();
-
+      if(Environment::getConfig().glDebug) {
+        if(Input::isKeyDown(SDL_SCANCODE_P) && !debugKeyPressed) {
+          debugKeyPressed = true;
+          if(world.getRenderer()->isInDebugCapture()) {
+            world.getRenderer()->stopDebugFrameCapture(); 
+          }
+          else {
+            world.getRenderer()->startDebugFrameCapture();  
+          }
+        }
+      }
+      if(!Input::isKeyDown(SDL_SCANCODE_P)) debugKeyPressed = false;
       SoundManager::update(world.getPlayer());
       world.update((currentTime-lastUpdate)/1000.);
       lastUpdate = currentTime;

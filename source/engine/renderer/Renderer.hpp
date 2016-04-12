@@ -157,6 +157,12 @@ public:
   int getTextWidth(std::string text);
   static Matrix4f clipProjMat(const Entity &ent, const Matrix4f &view, const Matrix4f &proj);
 
+  bool isInDebugCapture() { return debuggingFrame; }
+
+  void startDebugFrameCapture();
+
+  void stopDebugFrameCapture();
+
 private:
   Viewport *viewport;
   int vpWidth, vpHeight;
@@ -165,6 +171,8 @@ private:
   Vector4f fontColor;
   Font *font;
   int portalDepth;
+  bool debuggingFrame;
+  int currentCaptureFrameIndex;
 };
 
 } /* namespace glPortal */

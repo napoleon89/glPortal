@@ -20,6 +20,7 @@ public:
 
   std::string map;
   std::string mapPath;
+  bool glDebug;
 private:
   unsigned int width;
   unsigned int height;
